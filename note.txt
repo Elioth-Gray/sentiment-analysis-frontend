@@ -1,0 +1,7 @@
+Page :
+1. Login Page (username, email, password)
+2. Posts Page (show post picture (click to detail post))
+3. Detail Post Page (Toxic score, show detail comment)
+4. Dashboard ()
+
+Header : Account Info. (username, full_name, profile_picture, followers, following)
