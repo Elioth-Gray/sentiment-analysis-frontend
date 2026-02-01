@@ -1,5 +1,5 @@
-import { Shield } from 'lucide-react';
 import Carousel from '../ui/carousel';
+import LogoSNPMB from '@/assets/logo-snpmb.webp';
 
 export const DescriptionLogin = () => {
   const slides = [
@@ -33,8 +33,12 @@ export const DescriptionLogin = () => {
           {/* Logo & Title */}
           <div className="mb-6">
             <div className="inline-flex items-center gap-3 py-6">
-              <div className="w-14 h-14 bg-linear-to-br from-cyan-400 to-blue-600 rounded-xl flex items-center justify-center shadow-2xl shadow-cyan-500/30">
-                <Shield className="w-8 h-8 text-white" strokeWidth={2.5} />
+              <div className="h-auto bg-white rounded-xl flex items-center justify-center shadow-2xl w-fit p-2">
+                <img
+                  className="w-auto max-h-12"
+                  src={LogoSNPMB}
+                  alt="SNPMB Logo"
+                />
               </div>
               <div>
                 <h1 className="text-3xl font-bold tracking-tight">SNPMB</h1>

@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NavLink } from 'react-router-dom';
-import { Shield, LayoutDashboard, MessageSquare, LogOut } from 'lucide-react';
+import { LayoutDashboard, MessageSquare, LogOut } from 'lucide-react';
 import UserAvatar from './Avatar';
 import { Button } from '../ui/button';
+import LogoTutWuri from '@/assets/logo-tut-removebg.png';
 
 const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
   const user = {
@@ -13,14 +14,18 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
 
   return (
     <aside
-      className={`fixed left-0 top-0 h-full bg-slate-900 text-slate-100 transition-all ${
+      className={`fixed left-0 top-0 z-50 h-full bg-slate-900 text-slate-100 transition-all ${
         isOpen ? 'w-64' : 'w-20'
       }`}
     >
       {/* Logo */}
       <div className="p-6 border-b border-white/10 flex items-center gap-3 justify-center">
-        <div className="w-10 h-10 bg-cyan-600 rounded-lg flex items-center justify-center shrink-0">
-          <Shield className="w-6 h-6 text-white" />
+        <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center shrink-0 p-1">
+          <img
+            className="w-auto max-h-12"
+            src={LogoTutWuri}
+            alt="Tut Wuri Logo"
+          />
         </div>
         {isOpen && (
           <div>
