@@ -1,4 +1,4 @@
-import { Menu, X, Bell, Instagram } from 'lucide-react';
+import { Menu, X, Instagram } from 'lucide-react';
 import { Button } from '../ui/button';
 
 const Topbar = ({

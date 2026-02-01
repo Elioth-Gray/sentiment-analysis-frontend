@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { getInitials } from '@/utils/common/profile';
 
 type Props = {
   name: string;
@@ -12,13 +13,11 @@ const sizeMap = {
 };
 
 const UserAvatar = ({ name, size = 'md' }: Props) => {
-  const initial = name.charAt(0).toUpperCase();
-
   return (
     <Avatar
       className={`${sizeMap[size]} bg-slate-700 text-white font-semibold flex items-center justify-center`}
     >
-      <AvatarFallback>{initial}</AvatarFallback>
+      <AvatarFallback>{getInitials(name)}</AvatarFallback>
     </Avatar>
   );
 };

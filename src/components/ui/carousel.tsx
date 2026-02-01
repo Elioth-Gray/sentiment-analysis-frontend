@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { cn } from '@/lib/utils'; // optional (shadcn helper)
+import { cn } from '@/lib/utils';
+import { Button } from './button';
 
 type CarouselProps = {
   slides: React.ReactNode[];
@@ -34,7 +35,8 @@ export default function Carousel({ slides, interval = 4000 }: CarouselProps) {
       {/* Indicator */}
       <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-2">
         {slides.map((_, index) => (
-          <button
+          <Button
+            variant={'ghost'}
             key={index}
             onClick={() => setCurrent(index)}
             className={cn(
