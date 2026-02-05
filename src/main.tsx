@@ -6,7 +6,6 @@ import { ThemeProvider } from './components/provider/theme-provider';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Posts from './pages/Posts';
-import DetailPost from './pages/DetailPost';
 import DashboardLayout from './components/layout/Dashboard-Layout';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
@@ -34,13 +33,6 @@ const router = createBrowserRouter([
         element: <Posts />,
         handle: {
           title: 'Posts',
-        },
-      },
-      {
-        path: '/posts/:id',
-        element: <DetailPost />,
-        handle: {
-          title: 'Post Details',
         },
       },
     ],

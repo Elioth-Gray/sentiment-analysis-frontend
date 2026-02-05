@@ -1,150 +1,30 @@
 import { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import {
-  Search,
-  Filter,
-  Shield,
-  AlertTriangle,
-  Heart,
-  MessageCircle,
-  Calendar,
-  Eye,
-  Image as ImageIcon,
-  Video,
-  X,
-} from 'lucide-react';
-import { getThreat } from '@/utils/common/posts';
-import { getInitials } from '@/utils/common/profile';
+import { Search, Filter, Shield, AlertTriangle } from 'lucide-react';
+import PostCard from '@/components/Posts/PostCard';
+import { getPostStats } from '@/utils/common/posts';
+import { profile } from '@/utils/common/profile';
+import { postsDummy } from '@/dummy-data/post.data';
+import type { Post } from '@/types/posts.type';
+import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
 
-type Comment = {
-  id: number;
-  text: string;
-  is_protest: boolean;
-  protest_score: number;
-};
-
-type Account = {
-  username: string;
-  full_name: string;
-  profile_picture: string | null;
-  followers: number;
-  following: number;
-};
-
-type Post = {
-  id: number;
-  media_type: 'image' | 'video';
-  media_url: string;
-  like_count: number;
-  comment_count: number;
-  created_at: string;
-  account: Account;
-  comments: Comment[];
-};
-
-const formatNumber = (num: number) => {
-  if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;
-  if (num >= 1_000) return `${(num / 1_000).toFixed(1)}K`;
-  return num.toString();
-};
-
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  const diff = Date.now() - date.getTime();
-  const hours = Math.floor(diff / 3_600_000);
-  const days = Math.floor(diff / 86_400_000);
-
-  if (hours < 1) return 'Baru saja';
-  if (hours < 24) return `${hours} jam lalu`;
-  if (days < 7) return `${days} hari lalu`;
-
-  return date.toLocaleDateString('id-ID', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
-};
-
-const getPostStats = (post: Post) => {
-  const avgScore =
-    post.comments.reduce((a, b) => a + b.protest_score, 0) /
-    (post.comments.length || 1);
-
-  return {
-    total: post.comments.length,
-    protest: post.comments.filter((c) => c.is_protest).length,
-    avgScore,
-    isProtest: post.comments.filter((c) => c.is_protest).length > 0,
-  };
-};
-
-const POSTS: Post[] = [
-  {
-    id: 1,
-    media_type: 'image',
-    media_url:
-      'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800',
-    like_count: 1543,
-    comment_count: 87,
-    created_at: '2025-02-01T10:30:00',
-    account: {
-      username: 'aktivis_jakarta',
-      full_name: 'Ahmad Wahyudi',
-      profile_picture: null,
-      followers: 15420,
-      following: 892,
-    },
-    comments: [
-      { id: 1, text: 'Turun ke jalan!', is_protest: true, protest_score: 0.91 },
-      { id: 2, text: 'Semoga damai', is_protest: false, protest_score: 0.12 },
-    ],
-  },
-  {
-    id: 2,
-    media_type: 'image',
-    media_url:
-      'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800',
-    like_count: 13482,
-    comment_count: 812,
-    created_at: '2026-02-01T18:30:00',
-    account: {
-      username: 'snmpb_id',
-      full_name: 'SNPMB Indonesia',
-      profile_picture: null,
-      followers: 15420,
-      following: 892,
-    },
-    comments: [
-      {
-        id: 1,
-        text: 'Turun ke jalan!',
-        is_protest: false,
-        protest_score: 0.21,
-      },
-      { id: 2, text: 'Semoga damai', is_protest: false, protest_score: 0.12 },
-    ],
-  },
-];
-
-const PostsPage = () => {
+const Posts = () => {
   const [filter, setFilter] = useState<'all' | 'protest' | 'safe'>('all');
   const [search, setSearch] = useState('');
-  const [selected, setSelected] = useState<Post | null>(null);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
   const filteredPosts = useMemo(() => {
-    return POSTS.filter((post) => {
+    return postsDummy.filter((post) => {
       const stats = getPostStats(post);
-      if (filter === 'protest' && !stats.isProtest) return false;
-      if (filter === 'safe' && stats.isProtest) return false;
+      const isProtest = stats.avgScore >= 0.5;
+      if (filter === 'protest' && !isProtest) return false;
+      if (filter === 'safe' && isProtest) return false;
 
       if (search) {
         return (
-          post.account.username.toLowerCase().includes(search.toLowerCase()) ||
-          post.account.full_name.toLowerCase().includes(search.toLowerCase())
+          profile.username.toLowerCase().includes(search.toLowerCase()) ||
+          profile.full_name.toLowerCase().includes(search.toLowerCase())
         );
       }
 
@@ -154,7 +34,6 @@ const PostsPage = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <Card>
         <CardHeader>
           <CardTitle>Social Media Protest Monitoring</CardTitle>
@@ -195,111 +74,46 @@ const PostsPage = () => {
         </CardContent>
       </Card>
 
-      {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {filteredPosts.map((post) => {
           const stats = getPostStats(post);
-          const threat = getThreat(stats.avgScore);
 
           return (
-            <Card
-              key={post.id}
-              className="cursor-pointer hover:shadow-lg transition overflow-hidden py-0 gap-3"
-              onClick={() => setSelected(post)}
-            >
-              <CardHeader className="relative px-0">
-                <img
-                  src={post.media_url}
-                  className="object-cover w-full h-full"
-                />
-                <Badge className="absolute top-3 left-3">
-                  {post.media_type === 'video' ? (
-                    <Video className="w-4 h-4 mr-1" />
-                  ) : (
-                    <ImageIcon className="w-4 h-4 mr-1" />
-                  )}
-                  {post.media_type}
-                </Badge>
-                {threat && (
-                  <Badge
-                    className={`absolute top-3 right-3 py-1 ${threat.className}`}
-                  >
-                    {threat.label}
-                  </Badge>
-                )}
-              </CardHeader>
-
-              <CardContent className="px-4 mb-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <Avatar>
-                    <AvatarFallback>
-                      {getInitials(post.account.full_name)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="min-w-0">
-                    <p className="font-semibold truncate">
-                      {post.account.full_name}
-                    </p>
-                    <p className="text-xs text-slate-500 truncate">
-                      @{post.account.username}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex justify-between text-sm text-slate-600">
-                  <span className="flex items-center gap-1">
-                    <Heart className="w-4 h-4" />
-                    {formatNumber(post.like_count)}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <MessageCircle className="w-4 h-4" />
-                    {post.comment_count}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    {formatDate(post.created_at)}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
+            <PostCard
+              post={post}
+              score={stats.avgScore}
+              onSelect={(selectedPost) => {
+                setSelectedPost(selectedPost);
+              }}
+            />
           );
         })}
       </div>
 
-      {/* Modal */}
-      {selected && (
-        <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center p-4"
-          onClick={() => setSelected(null)}
-        >
-          <div
-            className="bg-white rounded-xl max-w-3xl w-full"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-between items-center p-4 border-b">
-              <h3 className="font-bold">Detail Post</h3>
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={() => setSelected(null)}
-              >
-                <X className="w-4 h-4" />
-              </Button>
+      <Dialog
+        open={!!selectedPost}
+        onOpenChange={(open) => !open && setSelectedPost(null)}
+      >
+        <DialogContent className="w-full max-w-lg sm:max-w-xl md:max-w-2xl mx-4">
+          <DialogHeader>
+            <h2 className="text-lg font-bold">
+              Post Detail {selectedPost?.id}
+            </h2>
+          </DialogHeader>
+
+          {selectedPost && (
+            <div className="space-y-4 px-12">
+              <img
+                src={selectedPost.media_url}
+                className="rounded-lg max-h-[280px] w-full object-cover"
+              />
+              <p>{selectedPost.caption}</p>
             </div>
-            <div className="p-6">
-              <Alert>
-                <Eye className="w-4 h-4" />
-                <AlertDescription>
-                  Post ini dianalisis untuk mendeteksi potensi konten protes
-                  berdasarkan komentar publik.
-                </AlertDescription>
-              </Alert>
-            </div>
-          </div>
-        </div>
-      )}
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
 
-export default PostsPage;
+export default Posts;

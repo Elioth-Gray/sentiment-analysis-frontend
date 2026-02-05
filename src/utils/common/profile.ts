@@ -5,3 +5,9 @@ export const getInitials = (name: string) =>
     .join('')
     .slice(0, 2)
     .toUpperCase();
+
+export const profile = {
+  username: 'snpmb_id',
+  full_name: 'SNPMB',
+  url: 'https://www.instagram.com/snpmb_id/',
+};
