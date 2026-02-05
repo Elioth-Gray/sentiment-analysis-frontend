@@ -1,3 +1,5 @@
+import type { Post } from '@/types/posts.type';
+
 export const getThreat = (avg: number) => {
   if (avg >= 0.8)
     return {
@@ -12,5 +14,12 @@ export const getThreat = (avg: number) => {
   return {
     label: 'Protes Rendah',
     className: 'bg-emerald-100 text-emerald-700 border border-emerald-200',
+  };
+};
+
+export const getPostStats = (post: Post) => {
+  return {
+    total: post.comments_count,
+    avgScore: post.protest_comments_percentage,
   };
 };

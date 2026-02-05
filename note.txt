@@ -2,6 +2,6 @@ Page :
 1. Login Page (username, email, password)
 2. Posts Page (show post picture (click to detail post))
 3. Detail Post Page (Toxic score, show detail comment)
-4. Dashboard ()
+4. Dashboard (Profile SNPMB (username, full_name, profile_picture, total_following, total_follower, total_post), AllPost(protest_average_percantage, newest_post), comments(newest_comment))
 
 Header : Account Info. (username, full_name, profile_picture, followers, following)
