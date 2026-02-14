@@ -15,7 +15,7 @@ export type SuccessResponse<T = unknown> = {
 export type ErrorResponse = {
   status: typeof Response_Status.FAILED;
   message: string;
-  errors: string[];
+  errors: string;
 };
 
 export type Meta = {

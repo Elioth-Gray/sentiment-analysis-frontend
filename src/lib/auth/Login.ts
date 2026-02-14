@@ -1,6 +1,6 @@
 import type { LoginSchema } from '@/schema/Auth.Schema';
 import type { AuthResponse } from '@/types/auth.type';
-import type { ErrorResponse } from '@/types/response.type';
+import { Response_Status, type ErrorResponse } from '@/types/response.type';
 import type z from 'zod';
 import { createErrorAction } from '../errorResponse';
 import { useAuthStore } from '../store/useAuthStore';
@@ -17,7 +17,7 @@ export const LoginAction = async (
       },
     });
 
-    if (response.data.status) {
+    if (response.data.status === Response_Status.SUCCESS) {
       const { token, user } = response.data.data;
       useAuthStore.getState().setAuth(token, user);
 
@@ -32,6 +32,6 @@ export const LoginAction = async (
         error.response.data.error || 'Unknown error',
       );
     }
-    return createErrorAction('An unexpected error occurred', ['Unknown error']);
+    return createErrorAction('An unexpected error occurred', 'Unknown error');
   }
 };

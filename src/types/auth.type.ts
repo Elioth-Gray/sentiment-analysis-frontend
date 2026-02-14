@@ -11,6 +11,11 @@ type Auth = {
   user: User;
 };
 
+type RefreshToken = {
+  token: string;
+};
+
 export type AuthResponse = SuccessResponse<Auth>;
 export type SignOutResponse = SuccessResponse;
 export type ProfileResponse = SuccessResponse<User>;
+export type RefreshTokenResponse = SuccessResponse<RefreshToken>;
