@@ -4,14 +4,15 @@ import { LayoutDashboard, MessageSquare, LogOut } from 'lucide-react';
 import UserAvatar from './Avatar';
 import { Button } from '../ui/button';
 import LogoTutWuri from '@/assets/logo-tut-removebg.png';
+import type { User } from '@/types/auth.type';
 
-const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
-  const user = {
-    username: 'reyy1234',
-    email: 'rheinaldy@protescope.go.id',
-    avatar: null,
-  };
-
+const Sidebar = ({
+  isOpen,
+  profile,
+}: {
+  isOpen: boolean;
+  profile: User | null;
+}) => {
   return (
     <aside
       className={`fixed left-0 top-0 z-50 h-full bg-slate-900 text-slate-100 transition-all ${
@@ -48,14 +49,19 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
       {/* User */}
       <div className="absolute bottom-0 w-full p-3 border-t border-white/10">
         <div className="flex items-center justify-center gap-3">
-          <UserAvatar name={user.username} size={isOpen ? 'md' : 'sm'} />
+          <UserAvatar
+            name={profile?.username || 'User'}
+            size={isOpen ? 'md' : 'sm'}
+          />
 
           {isOpen && (
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-slate-100 truncate">
-                {user.username}
+                {profile?.username}
               </p>
-              <p className="text-xs text-slate-400 truncate">{user.email}</p>
+              <p className="text-xs text-slate-400 truncate">
+                {profile?.email}
+              </p>
             </div>
           )}
         </div>

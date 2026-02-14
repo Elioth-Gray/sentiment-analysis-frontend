@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import Posts from './pages/Posts';
 import DashboardLayout from './components/layout/Dashboard-Layout';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { Toaster } from 'sonner';
 
 const router = createBrowserRouter([
   {
@@ -47,6 +48,7 @@ ReactDOM.createRoot(root).render(
       <QueryProvider>
         <RouterProvider router={router}></RouterProvider>
       </QueryProvider>
+      <Toaster className="toasterr" richColors position="top-right" />
     </ThemeProvider>
   </StrictMode>,
 );
