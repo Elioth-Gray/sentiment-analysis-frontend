@@ -1,14 +1,25 @@
+import type { Meta, SuccessResponse } from './response.type';
+
 export type Post = {
   id: string;
-  instagram_post_id: string;
-  permalink: string;
-  media_type: string;
-  media_url: string;
   caption: string;
   comments_count: number;
-  protest_comments_percentage: number;
   like_count: number;
+  instagram_post_id: string;
+  media_type: string;
+  media_url: string;
+  permalink: string;
   timestamp: string;
-  created_at: string;
-  updated_at: string;
+};
+
+export type Sync = {
+  success: boolean;
+  new_posts: number;
+  total_synced: number;
+  updated_posts: number;
+};
+
+export type SyncAccountResponse = SuccessResponse<Sync>;
+export type PostsResponse = SuccessResponse<Post[]> & {
+  meta: Meta;
 };

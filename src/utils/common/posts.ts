@@ -1,5 +1,3 @@
-import type { Post } from '@/types/posts.type';
-
 export const getThreat = (avg: number) => {
   if (avg >= 0.8)
     return {
@@ -17,9 +15,30 @@ export const getThreat = (avg: number) => {
   };
 };
 
-export const getPostStats = (post: Post) => {
+export const getCommentLevel = (comments: number) => {
+  if (comments === 0) {
+    return {
+      label: 'No Discussion',
+      className: 'bg-slate-100 text-slate-700',
+    };
+  }
+
+  if (comments <= 2) {
+    return {
+      label: 'Low',
+      className: 'bg-blue-100 text-blue-700',
+    };
+  }
+
+  if (comments <= 5) {
+    return {
+      label: 'Moderate',
+      className: 'bg-yellow-100 text-yellow-800',
+    };
+  }
+
   return {
-    total: post.comments_count,
-    avgScore: post.protest_comments_percentage,
+    label: 'High',
+    className: 'bg-red-100 text-red-700',
   };
 };
