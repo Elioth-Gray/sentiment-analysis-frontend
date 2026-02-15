@@ -15,7 +15,7 @@ const DashboardLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const matches = useMatches();
   const { data: profileData } = useQuery({
-    queryKey: ['profile'],
+    queryKey: ['profile', 'posts'],
     queryFn: ProfileAction,
   });
 

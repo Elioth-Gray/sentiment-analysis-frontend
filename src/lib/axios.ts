@@ -34,7 +34,6 @@ axiosAdmin.interceptors.request.use(
 
     if (token) {
       config.withCredentials = true;
-
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
@@ -45,12 +44,14 @@ axiosAdmin.interceptors.request.use(
 axiosAdmin.interceptors.response.use(
   (res) => res,
   async (err: AxiosError) => {
-    const originalRequest = err.config as AxiosRequestConfig | undefined;
+    const originalRequest = err.config as AxiosRequestConfig & {
+      _retry?: boolean;
+    };
     if (!originalRequest) return Promise.reject(err);
 
     const status = err.response?.status;
 
-    if (status === 401) {
+    if (status === 401 && !(originalRequest as any)._retry) {
       const { token, clearAuth } = useAuthStore.getState();
 
       if (!token) {
@@ -109,6 +110,7 @@ axiosAdmin.interceptors.response.use(
         isRefreshing = false;
       }
     }
+    return Promise.reject(err);
   },
 );
 

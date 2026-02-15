@@ -1,119 +1,70 @@
 import { useMemo, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Search, Filter, Shield, AlertTriangle } from 'lucide-react';
-import PostCard from '@/components/Posts/PostCard';
-import { getPostStats } from '@/utils/common/posts';
-import { profile } from '@/utils/common/profile';
-import { postsDummy } from '@/dummy-data/post.data';
 import type { Post } from '@/types/posts.type';
-import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
+import PostsTableToolbar from '@/components/Posts/PostsTableToolbar';
+import PostsTableSkeleton from '@/components/Posts/PostsTableToolbarSkeleton';
+import PostsTable from '@/components/Posts/PostsTable';
+import PostDetailDialog from '@/components/Posts/PostsDetailDialog';
+import { useQuery } from '@tanstack/react-query';
+import { getPostsAction } from '@/lib/posts/getPosts';
+import { Response_Status } from '@/types/response.type';
 
-const Posts = () => {
-  const [filter, setFilter] = useState<'all' | 'protest' | 'safe'>('all');
+const PostsTablePage = () => {
   const [search, setSearch] = useState('');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
+  const { data: postsData, isPending } = useQuery({
+    queryKey: ['posts'],
+    queryFn: getPostsAction,
+  });
+
   const filteredPosts = useMemo(() => {
-    return postsDummy.filter((post) => {
-      const stats = getPostStats(post);
-      const isProtest = stats.avgScore >= 0.5;
-      if (filter === 'protest' && !isProtest) return false;
-      if (filter === 'safe' && isProtest) return false;
+    if (!postsData || postsData.status !== Response_Status.SUCCESS) {
+      return [];
+    }
 
-      if (search) {
-        return (
-          profile.username.toLowerCase().includes(search.toLowerCase()) ||
-          profile.full_name.toLowerCase().includes(search.toLowerCase())
-        );
-      }
+    return (postsData.data ?? []).filter((post) => {
+      const captionMatch = post.caption
+        .toLowerCase()
+        .includes(search.toLowerCase());
 
-      return true;
+      const postDate = new Date(post.timestamp).toISOString().slice(0, 10);
+
+      const fromMatch = dateFrom ? postDate >= dateFrom : true;
+      const toMatch = dateTo ? postDate <= dateTo : true;
+
+      return captionMatch && fromMatch && toMatch;
     });
-  }, [filter, search]);
+  }, [postsData, search, dateFrom, dateTo]);
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Social Media Protest Monitoring</CardTitle>
-          <p className="text-sm text-slate-600">
-            Sistem analisis komentar publik untuk deteksi dini potensi protes
-          </p>
-        </CardHeader>
-        <CardContent className="flex flex-col lg:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Cari akun atau nama..."
-              className="w-full pl-9 pr-3 py-2 border rounded-md"
-            />
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant={filter === 'all' ? 'default' : 'outline'}
-              onClick={() => setFilter('all')}
-            >
-              <Filter className="w-4 h-4 mr-1" /> Semua
-            </Button>
-            <Button
-              variant={filter === 'protest' ? 'destructive' : 'outline'}
-              onClick={() => setFilter('protest')}
-            >
-              <AlertTriangle className="w-4 h-4 mr-1" /> Protes
-            </Button>
-            <Button
-              variant={filter === 'safe' ? 'default' : 'outline'}
-              onClick={() => setFilter('safe')}
-            >
-              <Shield className="w-4 h-4 mr-1" /> Aman
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <PostsTableToolbar
+        search={search}
+        dateFrom={dateFrom}
+        dateTo={dateTo}
+        onSearchChange={setSearch}
+        onDateFromChange={setDateFrom}
+        onDateToChange={setDateTo}
+      />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {filteredPosts.map((post) => {
-          const stats = getPostStats(post);
+      {isPending ? (
+        <PostsTableSkeleton />
+      ) : postsData?.status === Response_Status.SUCCESS ? (
+        <PostsTable onSelect={setSelectedPost} posts={filteredPosts} />
+      ) : (
+        <div className="text-center py-4">
+          Tidak ada postingan yang tersedia.
+        </div>
+      )}
 
-          return (
-            <PostCard
-              post={post}
-              score={stats.avgScore}
-              onSelect={(selectedPost) => {
-                setSelectedPost(selectedPost);
-              }}
-            />
-          );
-        })}
-      </div>
-
-      <Dialog
-        open={!!selectedPost}
-        onOpenChange={(open) => !open && setSelectedPost(null)}
-      >
-        <DialogContent className="w-full max-w-lg sm:max-w-xl md:max-w-2xl mx-4">
-          <DialogHeader>
-            <h2 className="text-lg font-bold">
-              Post Detail {selectedPost?.id}
-            </h2>
-          </DialogHeader>
-
-          {selectedPost && (
-            <div className="space-y-4 px-12">
-              <img
-                src={selectedPost.media_url}
-                className="rounded-lg max-h-[280px] w-full object-cover"
-              />
-              <p>{selectedPost.caption}</p>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      <PostDetailDialog
+        post={selectedPost}
+        onClose={() => setSelectedPost(null)}
+      />
     </div>
   );
 };
 
-export default Posts;
+export default PostsTablePage;
