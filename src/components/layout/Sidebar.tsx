@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, MessageSquare, LogOut } from 'lucide-react';
 import UserAvatar from './Avatar';
 import { Button } from '../ui/button';
 import LogoTutWuri from '@/assets/logo-tut-removebg.png';
 import type { User } from '@/types/auth.type';
+import { useAuthStore } from '@/lib/store/useAuthStore';
+import { toast } from 'sonner';
 
 const Sidebar = ({
   isOpen,
@@ -13,6 +15,15 @@ const Sidebar = ({
   isOpen: boolean;
   profile: User | null;
 }) => {
+  const { clearAuth } = useAuthStore();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    clearAuth();
+    toast.info('Berhasil Logout Akun');
+    navigate('/login', { replace: true });
+  };
+
   return (
     <aside
       className={`fixed left-0 top-0 z-50 h-full bg-slate-900 text-slate-100 transition-all ${
@@ -68,6 +79,7 @@ const Sidebar = ({
 
         <Button
           variant={'ghost'}
+          onClick={handleLogout}
           className="mt-4 w-full flex items-center gap-3 px-3 py-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition"
         >
           <LogOut className="w-5 h-5" />

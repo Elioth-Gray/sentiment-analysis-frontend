@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Outlet, useMatches } from 'react-router-dom';
+import { Outlet, useMatches, useNavigate } from 'react-router-dom';
 import Topbar from './Topbar';
 import Sidebar from './Sidebar';
 import { useQuery } from '@tanstack/react-query';
 import { ProfileAction } from '@/lib/auth/profile';
 import { Response_Status } from '@/types/response.type';
 import { Skeleton } from '../ui/skeleton';
+import { useAuthStore } from '@/lib/store/useAuthStore';
 
 type RouteHandle = {
   title?: string;
@@ -18,10 +19,17 @@ const DashboardLayout = () => {
     queryKey: ['profile', 'posts'],
     queryFn: ProfileAction,
   });
+  const navigate = useNavigate();
 
   const currentRoute = matches[matches.length - 1];
   const handle = currentRoute?.handle as RouteHandle | undefined;
   const title = handle?.title ?? '';
+
+  const { token } = useAuthStore.getState();
+  if (!token) {
+    navigate('/login', { replace: true });
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
