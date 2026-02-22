@@ -8,7 +8,7 @@ export const SyncAccountPostsAction = async (): Promise<
   SyncAccountResponse | ErrorResponse
 > => {
   try {
-    const response = await axiosAdmin.post('/posts/sync');
+    const response = await axiosAdmin.post('/comments/sync');
     if (response.data.status === Response_Status.SUCCESS) {
       return response.data as SyncAccountResponse;
     } else {

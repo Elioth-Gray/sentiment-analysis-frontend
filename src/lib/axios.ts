@@ -2,7 +2,8 @@
 import axios, { AxiosError, type AxiosRequestConfig } from 'axios';
 import { useAuthStore } from './store/useAuthStore';
 import { BASE_URL } from '@/utils/env';
-import type { RefreshTokenResponse } from '@/types/auth.type';
+import { useNavigate } from 'react-router';
+// import type { RefreshTokenResponse } from '@/types/auth.type';
 
 export const axiosAdmin = axios.create({
   baseURL: BASE_URL,
@@ -59,16 +60,19 @@ axiosAdmin.interceptors.response.use(
         return Promise.reject(err);
       }
 
-      // Queue requests if refreshing
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({
-            resolve: (token: string) => {
-              if (!originalRequest.headers) originalRequest.headers = {};
-              originalRequest.headers.Authorization = `Bearer ${token}`;
+            resolve: (newToken: string) => {
+              originalRequest.headers = {
+                ...originalRequest.headers,
+                Authorization: `Bearer ${newToken}`,
+              };
               resolve(axiosAdmin(originalRequest));
             },
-            reject,
+            reject: (err: any) => {
+              reject(err);
+            },
           });
         });
       }
@@ -81,13 +85,7 @@ axiosAdmin.interceptors.response.use(
           withCredentials: true,
         });
 
-        const data = response.data as RefreshTokenResponse;
-
-        if (!data || !data.data?.token) {
-          throw new Error('Failed to refresh token');
-        }
-
-        const newAccessToken = data.data.token;
+        const newAccessToken = response.data.data.token;
 
         useAuthStore
           .getState()
@@ -95,20 +93,75 @@ axiosAdmin.interceptors.response.use(
 
         processQueue(null, newAccessToken);
 
-        if (!originalRequest.headers) originalRequest.headers = {};
-        originalRequest.withCredentials = true;
+        originalRequest.headers = {
+          ...originalRequest.headers,
+          Authorization: `Bearer ${newAccessToken}`,
+        };
 
         return axiosAdmin(originalRequest);
-      } catch (err) {
-        processQueue(err, undefined);
-        clearAuth();
+      } catch (refreshError) {
+        processQueue(refreshError, undefined);
+        useAuthStore.getState().clearAuth();
         if (typeof window !== 'undefined') {
-          window.location.href = '/login';
+          const navigate = useNavigate();
+          navigate('/login', { replace: true });
+          // window.location.href = '/login';
         }
-        return Promise.reject(err);
+        return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
       }
+
+      // // Queue requests if refreshing
+      // if (isRefreshing) {
+      //   return new Promise((resolve, reject) => {
+      //     failedQueue.push({
+      //       resolve: (token: string) => {
+      //         if (!originalRequest.headers) originalRequest.headers = {};
+      //         originalRequest.headers.Authorization = `Bearer ${token}`;
+      //         resolve(axiosAdmin(originalRequest));
+      //       },
+      //       reject,
+      //     });
+      //   });
+      // }
+
+      // (originalRequest as any)._retry = true;
+      // isRefreshing = true;
+
+      // try {
+      //   const response = await axios.get(`${BASE_URL}/auth/refresh`, {
+      //     withCredentials: true,
+      //   });
+
+      //   const data = response.data as RefreshTokenResponse;
+
+      //   if (!data || !data.data?.token) {
+      //     throw new Error('Failed to refresh token');
+      //   }
+
+      //   const newAccessToken = data.data.token;
+
+      //   useAuthStore
+      //     .getState()
+      //     .setAuth(newAccessToken, useAuthStore.getState().user);
+
+      //   processQueue(null, newAccessToken);
+
+      //   if (!originalRequest.headers) originalRequest.headers = {};
+      //   originalRequest.withCredentials = true;
+
+      //   return axiosAdmin(originalRequest);
+      // } catch (err) {
+      //   processQueue(err, undefined);
+      //   clearAuth();
+      //   if (typeof window !== 'undefined') {
+      //     window.location.href = '/login';
+      //   }
+      //   return Promise.reject(err);
+      // } finally {
+      //   isRefreshing = false;
+      // }
     }
     return Promise.reject(err);
   },

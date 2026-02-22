@@ -25,9 +25,9 @@ const Topbar = ({
       if (result.status === Response_Status.SUCCESS) {
         queryClient.invalidateQueries({ queryKey: ['posts'] });
         toast.info('Sync completed', {
-          description: `Total synced: ${result.data?.total_synced}
-          Updated posts: ${result.data?.updated_posts}
-          New posts: ${result.data?.new_posts}`,
+          description: `New Comments: ${result.data?.new_comments}
+          Updated Comments: ${result.data?.updated_comments}
+          Posts Processed: ${result.data?.posts_processed}`,
         });
       } else {
         toast.error(result.errors);

@@ -13,10 +13,12 @@ export type Post = {
 };
 
 export type Sync = {
+  message: string;
+  new_comments: number;
+  posts_processed: number;
   success: boolean;
-  new_posts: number;
-  total_synced: number;
-  updated_posts: number;
+  total_comments: number;
+  updated_comments: number;
 };
 
 export type SyncAccountResponse = SuccessResponse<Sync>;

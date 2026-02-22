@@ -5,7 +5,6 @@ type AuthState = {
   token: string | null;
   user: User | null;
   setAuth: (token: string, user: AuthState['user']) => void;
-
   clearAuth: () => void;
 };
 

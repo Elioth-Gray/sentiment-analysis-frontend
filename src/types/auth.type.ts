@@ -15,6 +15,16 @@ type RefreshToken = {
   token: string;
 };
 
+export type JWTPayload = {
+  fresh: boolean;
+  iat: number;
+  jti: string;
+  type: string;
+  sub: string;
+  nbf: number;
+  exp: number;
+};
+
 export type AuthResponse = SuccessResponse<Auth>;
 export type SignOutResponse = SuccessResponse;
 export type ProfileResponse = SuccessResponse<User>;
