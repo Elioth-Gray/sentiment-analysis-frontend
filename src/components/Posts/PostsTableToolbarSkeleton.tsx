@@ -1,6 +1,6 @@
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from "@/components/ui/skeleton";
 
-const PostsTableSkeleton = () => {
+const CommentsTableSkeleton = () => {
   return (
     <div className="border rounded-lg bg-white">
       <div className="p-4 space-y-3">
@@ -20,4 +20,4 @@ const PostsTableSkeleton = () => {
   );
 };
 
-export default PostsTableSkeleton;
+export default CommentsTableSkeleton;
