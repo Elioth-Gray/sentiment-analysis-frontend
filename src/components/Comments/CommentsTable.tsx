@@ -6,18 +6,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-// import { Badge } from "@/components/ui/badge";
-import { ImageIcon, Video, Eye, MessageCircle, Badge } from "lucide-react";
 import type { Comment } from "@/types/comment.type";
 import { formatDate, formatNumber } from "@/utils/common/other";
 
 interface Props {
   comments: Comment[];
-  onSelect: (comment: Comment) => void;
+  // onSelect: (comment: Comment) => void;
 }
 
-const CommentsTable = ({ comments, onSelect }: Props) => {
+const CommentsTable = ({ comments }: Props) => {
   return (
     <div className="border rounded-lg bg-white">
       <Table>

@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { Outlet, useMatches, useNavigate } from 'react-router-dom';
-import Topbar from './Topbar';
-import Sidebar from './Sidebar';
-import { useQuery } from '@tanstack/react-query';
-import { ProfileAction } from '@/lib/auth/profile';
-import { Response_Status } from '@/types/response.type';
-import { Skeleton } from '../ui/skeleton';
-import { useAuthStore } from '@/lib/store/useAuthStore';
+import { useState } from "react";
+import { Outlet, useMatches, useNavigate } from "react-router-dom";
+import Topbar from "./Topbar";
+import Sidebar from "./Sidebar";
+import { useQuery } from "@tanstack/react-query";
+import { ProfileAction } from "@/lib/auth/profile";
+import { Response_Status } from "@/types/response.type";
+import { Skeleton } from "../ui/skeleton";
+import { useAuthStore } from "@/lib/store/useAuthStore";
 
 type RouteHandle = {
   title?: string;
@@ -16,18 +16,18 @@ const DashboardLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const matches = useMatches();
   const { data: profileData } = useQuery({
-    queryKey: ['profile', 'posts'],
+    queryKey: ["profile", "posts"],
     queryFn: ProfileAction,
   });
   const navigate = useNavigate();
 
   const currentRoute = matches[matches.length - 1];
   const handle = currentRoute?.handle as RouteHandle | undefined;
-  const title = handle?.title ?? '';
+  const title = handle?.title ?? "";
 
   const { token } = useAuthStore.getState();
   if (!token) {
-    navigate('/login', { replace: true });
+    navigate("/login", { replace: true });
     return null;
   }
 
@@ -40,9 +40,8 @@ const DashboardLayout = () => {
       )}
       <div
         className={`flex-1 transition-all duration-300 ${
-          isSidebarOpen ? 'ml-64' : 'ml-20'
-        }`}
-      >
+          isSidebarOpen ? "ml-64" : "ml-20"
+        }`}>
         {profileData?.status === Response_Status.SUCCESS ? (
           <Topbar
             title={title}

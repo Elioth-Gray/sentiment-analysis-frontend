@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NavLink, useNavigate } from "react-router-dom";
-import { LayoutDashboard, MessageSquare, LogOut, Folder } from "lucide-react";
+import {
+  LayoutDashboard,
+  MessageSquare,
+  LogOut,
+  Folder,
+  BarChart,
+} from "lucide-react";
 import UserAvatar from "./Avatar";
 import { Button } from "../ui/button";
 import LogoTutWuri from "@/assets/logo-tut-removebg.png";
@@ -56,6 +62,9 @@ const Sidebar = ({
         </NavItem>
         <NavItem to="/comments" icon={MessageSquare} isOpen={isOpen}>
           Comments
+        </NavItem>
+        <NavItem to="/statistics" icon={BarChart} isOpen={isOpen}>
+          Statistics
         </NavItem>
       </nav>
 
