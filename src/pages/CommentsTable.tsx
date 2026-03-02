@@ -3,10 +3,12 @@ import type { Comment } from "@/types/comment.type";
 import { useQuery } from "@tanstack/react-query";
 import { getCommentsAction } from "@/lib/comments/getComments";
 import { Response_Status } from "@/types/response.type";
+
 import CommentsTable from "@/components/Comments/CommentsTable";
 import CommentsTableToolbar from "@/components/Comments/CommentsTableToolbar";
 import CommentsTableSkeleton from "@/components/Posts/PostsTableToolbarSkeleton";
 import CommentDetailDialog from "@/components/Posts/PostsDetailDialog";
+import CommentsChart from "@/components/Comments/CommentsChart";
 
 const CommentsTablePage = () => {
   const [search, setSearch] = useState("");
@@ -52,14 +54,17 @@ const CommentsTablePage = () => {
       />
 
       {isPending ? (
-        <CommentsTableSkeleton />
+        <div className="space-y-6">
+          <CommentsTableSkeleton />
+        </div>
       ) : commentsData?.status === Response_Status.SUCCESS ? (
-        <CommentsTable
-          // onSelect={setSelectedComment}
-          comments={filteredComments}
-        />
+        <div className="space-y-8">
+          <CommentsChart comments={filteredComments} />
+
+          <CommentsTable comments={filteredComments} />
+        </div>
       ) : (
-        <div className="text-center py-4">
+        <div className="py-4 text-center text-slate-500">
           Tidak ada komentar yang tersedia.
         </div>
       )}

@@ -42,6 +42,3 @@ export const getCommentLevel = (comments: number) => {
     className: "bg-red-100 text-red-700",
   };
 };
-
-
-};

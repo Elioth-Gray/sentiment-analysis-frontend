@@ -10,6 +10,7 @@ import Comments from "./pages/Comments";
 import DashboardLayout from "./components/layout/Dashboard-Layout";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Toaster } from "sonner";
+import StatisticsPage from "./components/Statistics/Statistics";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,13 @@ const router = createBrowserRouter([
         element: <Comments />,
         handle: {
           title: "Comments",
+        },
+      },
+      {
+        path: "/statistics",
+        element: <StatisticsPage />,
+        handle: {
+          title: "Statistics",
         },
       },
     ],
