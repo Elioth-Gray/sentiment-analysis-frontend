@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, MessageSquare, LogOut } from 'lucide-react';
-import UserAvatar from './Avatar';
-import { Button } from '../ui/button';
-import LogoTutWuri from '@/assets/logo-tut-removebg.png';
-import type { User } from '@/types/auth.type';
-import { useAuthStore } from '@/lib/store/useAuthStore';
-import { toast } from 'sonner';
+import { NavLink, useNavigate } from "react-router-dom";
+import { LayoutDashboard, MessageSquare, LogOut, Folder } from "lucide-react";
+import UserAvatar from "./Avatar";
+import { Button } from "../ui/button";
+import LogoTutWuri from "@/assets/logo-tut-removebg.png";
+import type { User } from "@/types/auth.type";
+import { useAuthStore } from "@/lib/store/useAuthStore";
+import { toast } from "sonner";
 
 const Sidebar = ({
   isOpen,
@@ -20,16 +20,15 @@ const Sidebar = ({
 
   const handleLogout = () => {
     clearAuth();
-    toast.info('Berhasil Logout Akun');
-    navigate('/login', { replace: true });
+    toast.info("Berhasil Logout Akun");
+    navigate("/login", { replace: true });
   };
 
   return (
     <aside
       className={`fixed left-0 top-0 z-50 h-full bg-slate-900 text-slate-100 transition-all ${
-        isOpen ? 'w-64' : 'w-20'
-      }`}
-    >
+        isOpen ? "w-64" : "w-20"
+      }`}>
       {/* Logo */}
       <div className="p-6 border-b border-white/10 flex items-center gap-3 justify-center">
         <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center shrink-0 p-1">
@@ -52,8 +51,11 @@ const Sidebar = ({
         <NavItem to="/dashboard" icon={LayoutDashboard} isOpen={isOpen}>
           Dashboard
         </NavItem>
-        <NavItem to="/posts" icon={MessageSquare} isOpen={isOpen}>
+        <NavItem to="/posts" icon={Folder} isOpen={isOpen}>
           Posts
+        </NavItem>
+        <NavItem to="/comments" icon={MessageSquare} isOpen={isOpen}>
+          Comments
         </NavItem>
       </nav>
 
@@ -61,8 +63,8 @@ const Sidebar = ({
       <div className="absolute bottom-0 w-full p-3 border-t border-white/10">
         <div className="flex items-center justify-center gap-3">
           <UserAvatar
-            name={profile?.username || 'User'}
-            size={isOpen ? 'md' : 'sm'}
+            name={profile?.username || "User"}
+            size={isOpen ? "md" : "sm"}
           />
 
           {isOpen && (
@@ -78,10 +80,9 @@ const Sidebar = ({
         </div>
 
         <Button
-          variant={'ghost'}
+          variant={"ghost"}
           onClick={handleLogout}
-          className="mt-4 w-full flex items-center gap-3 px-3 py-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition"
-        >
+          className="mt-4 w-full flex items-center gap-3 px-3 py-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition">
           <LogOut className="w-5 h-5" />
           {isOpen && <span className="font-medium">Logout</span>}
         </Button>
@@ -100,12 +101,11 @@ const NavItem = ({ to, icon: Icon, children, isOpen }: any) => {
         transition-all duration-200 ease-in-out
         ${
           isActive
-            ? 'bg-cyan-600 text-white shadow-md shadow-cyan-600/30'
-            : 'text-slate-300 hover:bg-white/10 hover:text-white'
+            ? "bg-cyan-600 text-white shadow-md shadow-cyan-600/30"
+            : "text-slate-300 hover:bg-white/10 hover:text-white"
         }
         `
-      }
-    >
+      }>
       <Icon
         className="
           w-5 h-5 shrink-0
@@ -119,8 +119,7 @@ const NavItem = ({ to, icon: Icon, children, isOpen }: any) => {
           className="
             transition-all duration-200
             group-hover:translate-x-0.5
-          "
-        >
+          ">
           {children}
         </span>
       )}

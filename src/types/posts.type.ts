@@ -1,4 +1,4 @@
-import type { Meta, SuccessResponse } from './response.type';
+import type { Meta, SuccessResponse } from "./response.type";
 
 export type Post = {
   id: string;
